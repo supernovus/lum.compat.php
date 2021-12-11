@@ -1,0 +1,18 @@
+{
+  "name": "lum/lum-compat",
+  "description": "Lum library compatibility level meta-package",
+  "license": "MIT",
+  "authors":
+  [
+    {
+      "name": "Timothy Totten",
+      "email": "supernovus@gmail.com",
+      "role": "Original Author"
+    }
+  ],
+  "require":
+  {
+    "php": "^7.4 || ^8.0",
+    "ext-json": "*"
+  }
+}
