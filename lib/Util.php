@@ -259,4 +259,86 @@ class Util
     return $buffer;
   }
 
+  /**
+   * Get the caller of the function which called this.
+   *
+   * @param mixed $opts  (Optional) Can specify a bunch of options.
+   *
+   *   If it is an `array` it's assumed to be named options:
+   *
+   *     `"level" => (int)` - The depth level to get, must be >= 3;
+   *                          Default: `3`
+   *
+   *     `"full" => (bool)` - If `true` return the full caller array.
+   *                          If `false` return just the function name.
+   *                          Default: `false`
+   *
+   *     `"default" => (string) - If a function name could not be determined,
+   *                              return this value instead. 
+   *                              Only used if `full` is `false`.
+   *                              Default: `UNKNOWN`
+   *
+   *   If it is an `int` it's the `level` option.
+   *
+   *   If it is a `bool` it's the `full` option.
+   *
+   *   If it is a `string` it's the `default` option.
+   *
+   * @return string|array|null  Output depends on options.
+   *
+   *   If `full` is `true` this will return an `array` corresponding to the
+   *   debug_backtrace() value at offset `level-1`; 
+   *   If that offset does not exist, the return value will be `null`;
+   *
+   *   If `full` is `false` this will return the `"function"` name from the
+   *   debug_backtrace() value at offset `level-1`;
+   *   If that offset does not exist, or for whatever reason has no key
+   *   called `"function"`, then the `default` will be returned.
+   *
+   */
+  static function caller ($opts=null)
+  {
+    $level   = 3;           // Default depth to go down.
+    $full    = false;       // Do we want the full trace, or just 'function'?
+    $default = 'UNKNOWN';   // If no function can be determined, use this.
+
+    if (is_array($opts))
+    { // Can specify named options.
+      if (isset($opts['level']))
+        $level = $opts['level'];
+      if (isset($opts['full']))
+        $full = $opts['full'];
+      if (isset($opts['default']))
+        $default = $opts['default'];
+    }
+    elseif (is_int($opts))
+    { // Changed the depth level.
+      $level = $opts;
+    }
+    elseif (is_bool($opts))
+    { // Changed the full value.
+      $full = $opts;
+    }
+    elseif (is_string($opts))
+    { // Changed the default name.
+      $default = $opts;
+    }
+
+    if ($level < 3) throw new \Exception("caller() level must be 3 or higher");
+
+    $offset = $level-1;
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $level);
+    $caller = $backtrace[$offset] ?? null;
+
+    if ($full)
+    { // Return the full caller.
+      return $caller;
+    }
+    else
+    { // Just return the function name.
+      return $caller['function'] ?? $default;
+    }
+
+  } // caller()
+  
 }
