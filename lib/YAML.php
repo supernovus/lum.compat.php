@@ -30,6 +30,9 @@ class YAML
   const O_POBJ = 'parseObjects';
   const O_EOBJ = 'emitObjects';
 
+  const DOC_MARKER = '/^---/';
+  const DOC_TRIM   = " \n\r\t\v\0-";
+
   // Note the protected properties use placeholder values until
   // the extension/library that powers them has been determined to be in use.
 
@@ -144,7 +147,7 @@ class YAML
 
     // We're going to try to make Symfony work more like the yaml extension.
 
-    $inDocs = preg_split('/^---/', ltrim($data, ' \n\r\t\v\0-'));
+    $inDocs = preg_split(self::DOC_MARKER, ltrim($data, self::DOC_TRIM));
     if ($doc === -1)
     { // We want all documents. 
       $outDocs = [];
